@@ -2,8 +2,8 @@ import React from 'react';
 
 const Loading:React.FC=()=>{
     return(
-        <div>
-            <h1>Loading</h1>
+        <div className='text-center'>
+            <h1>Loading....</h1>
         </div>
     )
 }
