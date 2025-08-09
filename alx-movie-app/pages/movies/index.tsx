@@ -1,6 +1,6 @@
-import Button from "@/components/commons/Button";
-import Loading from "@/components/commons/Loading";
-import MovieCard from "@/components/commons/MovieCard";
+import Button from "@/omponents/commons/Button";
+import Loading from "@/omponents/commons/Loading";
+import MovieCard from "@/omponents/commons/MovieCard";
 import { MoviesProps } from "@/interfaces";
 import { useCallback, useEffect, useState } from "react";
 
@@ -61,14 +61,17 @@ const Movies: React.FC<MProps> = () => {
         className="border-2 w-full md:w-96 border-[#E2D609] outline-none bg-transparent px-4 py-2 rounded-full text-white placeholder-gray-400"
       />
 
+      <label htmlFor="year-select" className="sr-only">Select Year</label>
       <select
+        id="year-select"
+        aria-label="Select Year"
         onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setYear(Number(event.target.value))}
         className="border-2 border-[#E2D609] outline-none bg-transparent px-4 md:px-8 py-2 mt-4 md:mt-0 rounded-full w-full md:w-auto"
       >
         <option value="">Select Year</option>
         {
           [2024, 2023, 2022, 2021, 2020, 2019].map((year: number) => (
-            <option value={year} key={year}>{year}</option>
+            <option value={year} key={year} className="text-black font-semibold px-4">{year}</option>
           ))
         }
       </select>
@@ -88,17 +91,17 @@ const Movies: React.FC<MProps> = () => {
 
     {/* Movies output */}
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 mt-10">
-      {
-        movies?.map((movie: MoviesProps, key: number) => (
-          <MovieCard
-            title={movie?.titleText.text}
-            posterImage={movie?.primaryImage?.url}
-            releaseYear={movie?.releaseYear.year}
-            key={key}
-          />
-        ))
-      }
-    </div>
+  {
+    movies?.map((movie: MoviesProps, key: number) => (
+      <MovieCard
+        title={movie?.titleText.text}
+        posterImage={movie?.primaryImage?.url}
+        releaseYear={movie?.releaseYear.year}
+        key={key}
+      />
+    ))
+  }
+</div>
     <div className="flex justify-end space-x-4 mt-6">
       <Button title="Previous" action={() => setPage(prev => prev > 1 ? prev - 1 : 1)} />
       <Button title="Next" action={() => setPage(page + 1)} />
