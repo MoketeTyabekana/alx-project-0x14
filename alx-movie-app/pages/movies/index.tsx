@@ -16,31 +16,41 @@ const Movies: React.FC<MProps> = () => {
   const [genre, setGenre] = useState<string>("All")
   const [movies, setMovies] = useState<MoviesProps[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>("")
 
  const fetchMovies = useCallback(async () => {
     setLoading(true)
-    const response = await fetch('/api/fetch-movies', {
-      method: 'POST',
-      body: JSON.stringify({
-        page,
-        year, 
-        genre: genre === "All" ? "" : genre
-      }),
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
+    setError("")
+    try {
+      const response = await fetch('/api/fetch-movies', {
+        method: 'POST',
+        body: JSON.stringify({
+          page,
+          year, 
+          genre: genre === "All" ? "" : genre
+        }),
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch movies. Please try again later.")
       }
-    })
 
-    if (!response.ok) {
+      const data = await response.json()
+      const results = data.movies
+      setMovies(results)
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Something went wrong")
+      } else {
+        setError("Something went wrong")
+      }
+      setMovies([])
+    } finally {
       setLoading(false)
-      throw new Error("Something went wrong")
     }
-
-    const data = await response.json()
-    const results = data.movies
-    console.log(results)
-    setMovies(results)
-    setLoading(false)
   }, [page, year, genre])
 
 
@@ -52,7 +62,7 @@ const Movies: React.FC<MProps> = () => {
 
 
   return (
-    <div className="min-h-screen bg-[#110F17] text-white px-4 md:px-10 lg:px-44">
+  <div className="min-h-screen bg-[#110F17] text-white px-4 md:px-10 lg:px-44">
   <div className="py-16">
     <div className="flex flex-col md:flex-row justify-between mb-4 items-center space-x-0 md:space-x-4">
       <input
@@ -107,10 +117,13 @@ const Movies: React.FC<MProps> = () => {
       <Button title="Next" action={() => setPage(page + 1)} />
     </div>
   </div>
-  {
-    loading && <Loading />
-  }
-</div>
+  {loading && <Loading />}
+  {error && (
+    <div className="text-red-500 mt-4 text-center">
+      {error}
+    </div>
+  )}
+  </div>
 
   )
 }
